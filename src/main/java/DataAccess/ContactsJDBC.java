@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+
 import static java.lang.StringTemplate.STR;
 @Repository
 public class ContactsJDBC implements ContactDao {
@@ -95,49 +98,47 @@ public class ContactsJDBC implements ContactDao {
         }
 
     }
-    @Override
     public String uploadPhoto(UUID id, MultipartFile file) {
         try {
-            // Store the file and get its URL
             String photoUrl = storeFileAndGetUrl(file);
-            // Update the contact's photo URL in the database
             String sql = "UPDATE contacts SET photo_url = ? WHERE id = ?";
             int rowsAffected = jdbcTemplate.update(sql, photoUrl, id);
             if (rowsAffected != 1) {
                 return "Failed to update contact photo, please try again.";
             }
-            //Tell the user that the upload was successful.
-            return STR."Photo uploaded successfully for contact ID \{id}.";
+            // Using string interpolation for success message
+            return STR."Photo uploaded successfully for contact ID ${id}.";
         } catch (IOException e) {
             return "Failed to store the file, please try again.";
         } catch (DataAccessException e) {
             return "Database error occurred, please try again.";
         }
     }
-    String storeFileAndGetUrl(MultipartFile file) throws IOException {
-        // Absolute path to the directory where files will be stored
+
+
+    private final Function<String, String> fileExtension = fileName -> {
+        return Optional.ofNullable(fileName)
+                .filter(name -> name.contains("."))
+                .map(name -> name.substring(fileName.lastIndexOf(".") + 1))
+                .orElse("png");
+    };
+
+
+    final String storeFileAndGetUrl(MultipartFile file) throws IOException {
         String directoryPath = "/Users/jeremiahdunphy/Desktop/contactapi/src/main/resources/Photos";
-
-        // Create a unique file name, perhaps using a UUID
-        String fileName = STR."\{UUID.randomUUID().toString()}_\{file.getOriginalFilename()}";
-
-        // Full path where the file will be stored
+        // Assuming direct execution within ${} is supported
+        String fileName = "${UUID.randomUUID().toString()}_${file.getOriginalFilename()}";
         String filePath = directoryPath + File.separator + fileName;
 
-        // Ensure the directory exists
         File directory = new File(directoryPath);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        // Save the file
-        File destinationFile = new File(filePath);
-        file.transferTo(destinationFile);
-
-        // Return the file path or a URL to access the file
-        // Adjust this return statement based on how you wish to access the file
+        file.transferTo(new File(filePath));
         return filePath;
     }
+
     public Contact mapRowsToContact(SqlRowSet rs) {
     Contact contact = new Contact();
             contact.setId(UUID.fromString(rs.getString("id")));
