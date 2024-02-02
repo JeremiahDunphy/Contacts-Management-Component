@@ -4,13 +4,13 @@
 This project is a work-in-progress Full-Stack Contacts Management Component. It's being developed using Spring Boot and Hibernate for the backend, with PostgreSQL for data persistence. The frontend is planned to be built with React, providing a dynamic user interface for managing contact information.
 
 ## Current Progress
-- Backend setup with Spring Boot and Hibernate.
-- PostgreSQL database integration for handling data.
+- Backend setup with Spring Boot, Hibernate, JPA, JDBC. 
+- PostgreSQL database integration for handling data. 
 - Basic Model-View-Controller (MVC) architecture implemented.
-- Basic CRUD operations for contacts are being developed.
+- Complete CRUD operations for contact management. 
+  
 
 ## Upcoming Features
-- Complete CRUD operations for contact management.
 - Implementation of the frontend using React.
 - Integration of frontend and backend.
 - Enhancements in security and performance.
