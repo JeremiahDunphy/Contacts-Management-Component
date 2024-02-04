@@ -6,7 +6,7 @@ This project is a work-in-progress Full-Stack Contacts Management Component. It'
 ## Current Progress
 - Backend setup with Spring Boot, Hibernate, JPA, JDBC. 
 - PostgreSQL database integration for handling data. 
-- Basic Model-View-Controller (MVC) architecture implemented.
+- Basic model-View-controller (MVC) architecture implemented.
 - Complete CRUD operations for contact management. 
   
 

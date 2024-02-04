@@ -1,5 +1,5 @@
-package DataAccess;
-import Model.Contact;
+package com.contacts.contactsAPI.dataaccess;
+import com.contacts.contactsAPI.model.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -7,15 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
-
-import static java.lang.StringTemplate.STR;
 @Repository
 public class ContactsJDBC implements ContactDao {
     private final JdbcTemplate jdbcTemplate;
@@ -26,7 +22,7 @@ public class ContactsJDBC implements ContactDao {
     @Override
     public Contact getContactById(UUID id) {
         Contact contact = null;
-        String sql = "SELECT Contacts FROM Contacts WHERE id = ?;";
+        String sql = "SELECT * FROM contacts WHERE id = ?;";
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, id);
             while (rs.next()) {
@@ -41,7 +37,7 @@ public class ContactsJDBC implements ContactDao {
 
     public List<Contact> getAllContacts() {
         List<Contact> contacts = new ArrayList<>();
-        String sql = "Select * FROM Contacts;";
+        String sql = "SELECT * FROM contacts;";
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql);
             while (rs.next()) {
@@ -124,7 +120,7 @@ public class ContactsJDBC implements ContactDao {
     };
 
 
-    final String storeFileAndGetUrl(MultipartFile file) throws IOException {
+    public final String storeFileAndGetUrl(MultipartFile file) throws IOException {
         String directoryPath = "/Users/jeremiahdunphy/Desktop/contactapi/src/main/resources/Photos";
         // Assuming direct execution within ${} is supported
         String fileName = "${UUID.randomUUID().toString()}_${file.getOriginalFilename()}";
@@ -141,9 +137,10 @@ public class ContactsJDBC implements ContactDao {
 
     public Contact mapRowsToContact(SqlRowSet rs) {
     Contact contact = new Contact();
-            contact.setId(UUID.fromString(rs.getString("id")));
+            contact.setId(UUID.fromString(Objects.requireNonNull(rs.getString("id"))));
             contact.setName(rs.getString("name"));
-            contact.setTitle(rs.getString("email"));
+            contact.setEmail(rs.getString("email"));
+            contact.setTitle(rs.getString("title"));
             contact.setLocation(rs.getString("location"));
             contact.setPhone(rs.getString("phone"));
             contact.setAddress(rs.getString("address"));

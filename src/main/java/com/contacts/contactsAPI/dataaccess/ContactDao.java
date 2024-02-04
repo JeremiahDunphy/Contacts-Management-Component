@@ -1,6 +1,7 @@
-package DataAccess;
-import Model.Contact;
+package com.contacts.contactsAPI.dataaccess;
+import com.contacts.contactsAPI.model.Contact;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.UUID;
 
